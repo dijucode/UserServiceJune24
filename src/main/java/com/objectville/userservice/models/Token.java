@@ -1,4 +1,4 @@
-package models;
+package com.objectville.userservice.models;
 
 
 import jakarta.persistence.Entity;
@@ -13,7 +13,8 @@ import java.util.Date;
 @Entity
 public class Token extends BaseModel{
     private String value;
-    private Date expiryAt;
+
     @ManyToOne
     private User user;
+    private Date expiryAt;
 }

@@ -1,4 +1,4 @@
-package models;
+package com.objectville.userservice.models;
 
 import jakarta.persistence.Entity;
 
