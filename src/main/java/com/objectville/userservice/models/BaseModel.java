@@ -6,9 +6,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
-
-
-
 @MappedSuperclass
 @Getter
 @Setter
@@ -16,10 +13,8 @@ import lombok.Setter;
 public class BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-
     private Long id;
-    private boolean isDeleted;
+    private boolean deleted;
 
 
 

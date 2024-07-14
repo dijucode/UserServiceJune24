@@ -6,6 +6,7 @@ import com.objectville.userservice.dtos.SignUpRequestDto;
 import com.objectville.userservice.dtos.UserDto;
 import com.objectville.userservice.models.Token;
 import com.objectville.userservice.models.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.objectville.userservice.services.UserService;
@@ -33,19 +34,31 @@ public class UserController {
 
     @PostMapping("/login")
     public Token login(@RequestBody LogInRequestDto requestDto) {
-        return null;
+
+         Token token = userService.login
+                 (requestDto.getEmail(),
+                 requestDto.getPassword());
+        return token;
     }
 
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestBody LogOutRequestDto requestDto) {
-        return null;
+
+         userService.logout(requestDto.getToken());
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
 
 
     @PostMapping("/validate/{token}")
     public UserDto validateToken(@PathVariable String token) {
-        return null;
+
+         User user = userService.validateToken(token);
+         return UserDto.from(user);
+
+
+
     }
 }
