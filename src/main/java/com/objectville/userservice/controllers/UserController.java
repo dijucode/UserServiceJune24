@@ -17,7 +17,7 @@ public class UserController {
 
     private UserService userService;
 
-     UserController(UserService userService) {
+    UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -35,9 +35,9 @@ public class UserController {
     @PostMapping("/login")
     public Token login(@RequestBody LogInRequestDto requestDto) {
 
-         Token token = userService.login
-                 (requestDto.getEmail(),
-                 requestDto.getPassword());
+        Token token = userService.login
+                (requestDto.getEmail(),
+                        requestDto.getPassword());
         return token;
     }
 
@@ -45,19 +45,26 @@ public class UserController {
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestBody LogOutRequestDto requestDto) {
 
-         userService.logout(requestDto.getToken());
+        userService.logout(requestDto.getToken());
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
 
-
     @GetMapping("/validate/{token}")
     public UserDto validateToken(@PathVariable String token) {
 
-         User user = userService.validateToken(token);
-         return UserDto.from(user);
+        User user = userService.validateToken(token);
+        return UserDto.from(user);
 
+
+    }
+
+    @GetMapping("/{id}")
+    public UserDto getUserById(@PathVariable Long id) {
+        System.out.println("Got the request here in User Service");
+
+        return null;
 
 
     }

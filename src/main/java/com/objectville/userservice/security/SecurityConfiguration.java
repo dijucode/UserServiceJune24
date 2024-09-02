@@ -1,7 +1,5 @@
 package com.objectville.userservice.security;
 
-
-
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -25,24 +23,13 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
@@ -92,19 +79,19 @@ public class SecurityConfiguration {
 //    @Bean
 //    public UserDetailsService userDetailsService() {
 //        UserDetails userDetails = User.builder()
-//            .username("user")
-//            .password("$2a$12$BnfzwkC6F87/wpGBCCv5h.CwXYDP9sXPKDRLh9BGCSmLQKFfIlxou")
-//            .roles("USER")
-//            .build();
+//                .username("user")
+//                .password("$2a$12$BnfzwkC6F87/wpGBCCv5h.CwXYDP9sXPKDRLh9BGCSmLQKFfIlxou")
+//                .roles("USER")
+//                .build();
 //
-//    return new InMemoryUserDetailsManager(userDetails);
+//        return new InMemoryUserDetailsManager(userDetails);
 //    }
 
 //    @Bean
 //    public RegisteredClientRepository registeredClientRepository() {
 //        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-//                .clientId("oidc-client")
-//                .clientSecret("$2a$12$qMORUnSc.wq14q28m.e3/.GYRmgQdWJCPTrX2QGZbI3KChYZ1AJWO")
+//                .clientId("oidc-client") // scaler
+//                .clientSecret("$2a$12$G2ZP0f0AZdWxCHPVp8Y75ueMJVtjreFE/9uSqBDxqs9QoC9/cLndu")
 //                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 //                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 //                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
@@ -154,25 +141,22 @@ public class SecurityConfiguration {
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder().build();
     }
-    @Configuration
-    public class CustomClaimsWithAuthoritiesConfiguration {
 
-
-        @Bean
-        public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
-            return (context) -> {
-                if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
-                    context.getClaims().claims((claims) -> {
-                        Set<String> roles = AuthorityUtils.authorityListToSet(context.getPrincipal().getAuthorities())
-                                .stream()
-                                .map(c -> c.replaceFirst("^ROLE_", ""))
-                                .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
-                        claims.put("roles", roles);
-                        claims.put("userid", context.getPrincipal().getName());
-                    });
-                }
-            };
-        }
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
+        return (context) -> {
+            if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
+                context.getClaims().claims((claims) -> {
+                    Set<String> roles = AuthorityUtils.authorityListToSet(context.getPrincipal().getAuthorities())
+                            .stream()
+                            .map(c -> c.replaceFirst("^ROLE_", ""))
+                            .collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
+                    claims.put("roles", roles);
+                    //claims.put("userId", userId)
+                    //TODO: Add userId in the token.
+                });
+            }
+        };
     }
 
 }
